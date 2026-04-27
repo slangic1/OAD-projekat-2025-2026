@@ -1,6 +1,6 @@
 package com.example.spirala_1.ui
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,9 +11,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -22,12 +22,13 @@ import com.example.spirala_1.data.GrupaStaticData
 import com.example.spirala_1.data.PredmetStaticData
 import com.example.spirala_1.model.Grupa
 import com.example.spirala_1.model.Predmet
+import com.example.spirala_1.viewmodel.QuizViewModel
 
 @Composable
 fun UpisSection(
-    onUpisCompleted: () -> Unit
+    viewModel: QuizViewModel
 ) {
-    var odabranaGodina by remember { mutableIntStateOf(1) }
+    var odabranaGodina by rememberSaveable { mutableStateOf(1) }
     var odabraniPredmet by remember { mutableStateOf<Predmet?>(null) }
     var odabranaGrupa by remember { mutableStateOf<Grupa?>(null) }
 
@@ -37,28 +38,26 @@ fun UpisSection(
 
     val godine = listOf(1, 2, 3, 4, 5)
     val predmeti = PredmetStaticData.getNeupisaniSaGodine(odabranaGodina)
-    val grupe = if (odabraniPredmet != null) {
-        GrupaStaticData.getGrupaFromPredmet(odabraniPredmet!!.naziv)
-    } else {
-        emptyList()
-    }
+
+    val grupe = odabraniPredmet?.let {
+        GrupaStaticData.getGrupaFromPredmet(it.naziv)
+    } ?: emptyList()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(bottom = 16.dp)
     ) {
-
-        Text("Godina")
-        androidx.compose.foundation.layout.Box {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("odabirGodina")
+        ) {
             OutlinedButton(
                 onClick = { expandedGodina = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("odabirGodina")
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(odabranaGodina.toString())
+                Text("Godina: $odabranaGodina ▼")
             }
 
             DropdownMenu(
@@ -79,15 +78,17 @@ fun UpisSection(
             }
         }
 
-        Text("Predmet")
-        androidx.compose.foundation.layout.Box {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .testTag("odabirPredmet")
+        ) {
             OutlinedButton(
                 onClick = { expandedPredmet = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("odabirPredmet")
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(odabraniPredmet?.naziv ?: "Odaberi predmet")
+                Text("Predmet: ${odabraniPredmet?.naziv ?: ""} ▼")
             }
 
             DropdownMenu(
@@ -107,15 +108,17 @@ fun UpisSection(
             }
         }
 
-        Text("Grupa")
-        androidx.compose.foundation.layout.Box {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .testTag("odabirGrupa")
+        ) {
             OutlinedButton(
                 onClick = { expandedGrupa = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("odabirGrupa")
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(odabranaGrupa?.naziv ?: "Odaberi grupu")
+                Text("Grupa: ${odabranaGrupa?.naziv ?: ""} ▼")
             }
 
             DropdownMenu(
@@ -137,10 +140,7 @@ fun UpisSection(
         Button(
             onClick = {
                 if (odabraniPredmet != null && odabranaGrupa != null) {
-                    PredmetStaticData.dodajUpisaniPredmet(odabraniPredmet!!)
-                    GrupaStaticData.dodajUpisanuGrupu(odabranaGrupa!!)
-                    onUpisCompleted()
-
+                    viewModel.upisiPredmet(odabraniPredmet!!, odabranaGrupa!!)
                     odabraniPredmet = null
                     odabranaGrupa = null
                 }
@@ -148,6 +148,7 @@ fun UpisSection(
             enabled = odabraniPredmet != null && odabranaGrupa != null,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 12.dp)
                 .testTag("dodajPredmetDugme")
         ) {
             Text("Upiši me")

@@ -31,7 +31,7 @@ fun KvizFilterDropdown(
             onClick = { expanded = true },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(odabraniFilter.naziv)
+            Text("${odabraniFilter.naziv} ▼")
         }
 
         DropdownMenu(

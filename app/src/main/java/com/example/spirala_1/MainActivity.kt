@@ -4,17 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.spirala_1.ui.MainScreen
-import com.example.spirala_1.theme.Spirala_1Theme
+import com.example.spirala_1.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            Spirala_1Theme {
-                MainScreen()
-            }
+            AppNavigation()
         }
     }
 }
