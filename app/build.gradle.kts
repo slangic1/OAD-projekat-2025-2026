@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.spirala_1"
+    namespace = "ba.etf.rma26.projekat"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.spirala_1"
+        applicationId = "ba.etf.rma26.projekat"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -57,4 +57,11 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    androidTestImplementation("org.jetbrains.kotlin:kotlin-reflect:2.0.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 }
